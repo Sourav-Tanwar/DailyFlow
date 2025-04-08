@@ -11,8 +11,8 @@ const ExpenseSchema = new Schema({
     type: String,
     required: false,
   },
-  Catogery:{
-    type:string,
+  Catogery: {
+    type: String,
     default: null
   },
   Amount: {
@@ -25,6 +25,6 @@ const ExpenseSchema = new Schema({
   },
 })
 
-const ExpenseModel = mongoose.mode("Expense",ExpenseSchema)
+const Expense = mongoose.model("Expense", ExpenseSchema)
 
-module.exports =ExpenseModel
+module.exports = Expense
