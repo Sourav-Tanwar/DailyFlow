@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 const { Schema } = mongoose;
 
 const ExpenseSchema = new Schema({
-  Expense: {
+  expense: {
     type: String,
     required: true
   },
@@ -11,15 +11,15 @@ const ExpenseSchema = new Schema({
     type: String,
     required: false,
   },
-  Catogery: {
+  catogery: {
     type: String,
     default: null
   },
-  Amount: {
+  amount: {
     type: Number,
     required: true
   },
-  Creation_Date: {
+  creation_Date: {
     type: Date,
     default: Date.now
   },
