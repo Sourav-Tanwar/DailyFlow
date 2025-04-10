@@ -103,7 +103,44 @@ const putExpense = async (req, res) => {
       message: "Failed to update expense"
     });
   }
+}
+
+const deleteExpense = async (req, res) => {
+  
+  console.log("DELETE request received")
+  // console.log(req.params.id)
+  const id = req.params.id;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid Expense ID format"
+    })
+  }
+
+  try {
+    const deleteExpense = await Expense.findByIdAndDelete(req.params.id);
+
+    if (!deleteExpense) {
+      return res.status(404).json({ message: "Expense not found" })
+    }
+
+    res.status(200).json({
+      succes: true,
+      data: deleteExpense
+
+    })
+  }
+  catch (error) {
+    console.log(error)
+    res.status(500).json({
+      success: false,
+      message: "Failed to Delete expense"
+    });
+  }
 
 }
 
-module.exports = { getExpense, postExpense, putExpense }
+
+
+module.exports = { getExpense, postExpense, putExpense, deleteExpense }
