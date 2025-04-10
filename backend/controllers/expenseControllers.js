@@ -1,5 +1,6 @@
 const Expense = require('../models/ExpenseSchema');
 const { body, validationResult } = require('express-validator');
+const mongoose = require("mongoose");
 
 
 
@@ -26,7 +27,6 @@ const getExpense = async (req, res) => {
     })
   }
 }
-
 
 const postExpense = async (req, res) => {
   [
@@ -56,4 +56,54 @@ const postExpense = async (req, res) => {
 
 }
 
-module.exports = { getExpense, postExpense }
+const putExpense = async (req, res) => {
+  [
+    body('expense').isLength({ min: 1 }),
+    body('amount').isLength({ min: 1 })
+  ]
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  console.log("PUT request received")
+  // console.log(req.body)
+  // console.log(req.params.id)
+
+  const { expense, amount } = req.body;
+  const id = req.params.id;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid Expense ID format"
+    })
+  }
+
+  try {
+    const updateExpense = await Expense.findByIdAndUpdate(
+      req.params.id,
+      { expense, amount },
+      { new: true } // return the updated document
+    );
+
+    if (!updateExpense) {
+      return res.status(404).json({ message: "Expense not found" })
+    }
+
+    res.status(200).json({
+      succes: true,
+      data: updateExpense
+
+    })
+  }
+  catch (error) {
+    console.log(error)
+    res.status(500).json({
+      success: false,
+      message: "Failed to update expense"
+    });
+  }
+
+}
+
+module.exports = { getExpense, postExpense, putExpense }
