@@ -2,8 +2,6 @@ const Expense = require('../models/ExpenseSchema');
 const { body, validationResult } = require('express-validator');
 const mongoose = require("mongoose");
 
-
-
 const getExpense = async (req, res) => {
   try {
     const allExpenses = await Expense.find();
@@ -29,10 +27,10 @@ const getExpense = async (req, res) => {
 }
 
 const postExpense = async (req, res) => {
-  [
-    body('expense').isLength({ min: 1 }),
-    body('amount').isLength({ min: 1 })
-  ]
+  // [
+  //   body('expense').isLength({ min: 1 }),
+  //   body('amount').isLength({ min: 1 })
+  // ]
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -53,14 +51,13 @@ const postExpense = async (req, res) => {
     console.log(error)
     res.json({ success: false });
   }
-
 }
 
 const putExpense = async (req, res) => {
-  [
-    body('expense').isLength({ min: 1 }),
-    body('amount').isLength({ min: 1 })
-  ]
+  // [
+  //   body('expense').isLength({ min: 1 }),
+  //   body('amount').isLength({ min: 1 })
+  // ]
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
@@ -106,7 +103,6 @@ const putExpense = async (req, res) => {
 }
 
 const deleteExpense = async (req, res) => {
-  
   console.log("DELETE request received")
   // console.log(req.params.id)
   const id = req.params.id;
@@ -138,9 +134,6 @@ const deleteExpense = async (req, res) => {
       message: "Failed to Delete expense"
     });
   }
-
 }
-
-
 
 module.exports = { getExpense, postExpense, putExpense, deleteExpense }
