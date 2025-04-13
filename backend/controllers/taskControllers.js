@@ -1,4 +1,4 @@
-const TaskModel = require("../models/TaskSchema")
+const Tasks = require("../models/TaskSchema")
 const { body, validationResult } = require('express-validator');
 const mongoose = require("mongoose");
 
@@ -27,5 +27,27 @@ const getTasks = async (req, res) => {
   }
 }
 
+const postTasks = async (req,res)=>{
+  console.log("POST Tasks")
+  console.log(req.body)
 
-module.exports = { getTasks }
+  const {title, description,status} = req.body;
+
+  try{
+    const Task = new Tasks({
+      title:title,
+      description:description,
+      status:status
+    })
+    const saveTasks = await Task.save()
+
+    res.status(200).json(saveTasks)
+  }
+  catch(error){
+    console.log(error)
+    res.json({ success: false });
+  }
+}
+
+
+module.exports = { getTasks,postTasks }
