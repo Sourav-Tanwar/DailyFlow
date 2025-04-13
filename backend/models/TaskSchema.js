@@ -12,8 +12,8 @@ const TaskSchema = new Schema({
     required: true,
 
   },
-  status:{
-    type:string,
+  status: {
+    type: String,
     default: "Pending"
   },
   tag: {
@@ -39,3 +39,6 @@ const TaskSchema = new Schema({
 })
 
 module.exports = mongoose.model("TaskModel", TaskSchema)
+
+// const Tasks = mongoose.model("Tasks", TaskSchema)
+// module.exports = Tasks;

@@ -3,6 +3,8 @@ const app = express()
 const connectDB = require("./config/connectDB")
 const port = process.env.PORT
 const expenseRoutes = require("./routes/expenseRoutes")
+const tasksRoutes  = require('./routes/tasksRoutes')
+
 
 connectDB();
 app.use(express.json())
@@ -12,6 +14,7 @@ app.get("/", (req, res) => {
 })
 
 app.use('/api', expenseRoutes)
+app.use('/api',tasksRoutes)
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
