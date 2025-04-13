@@ -51,7 +51,7 @@ const postTasks = async (req, res) => {
 
 
 const putTasks = async (req, res) => {
-  console.log("POST Tasks")
+  console.log("PUT Tasks")
   console.log(req.body)
 
   const { title, description, status } = req.body;
@@ -90,7 +90,40 @@ const putTasks = async (req, res) => {
 }
 
 
+const deleteTasks = async (req, res) => {
+  console.log("Delete Tasks")
+  const id = req.params.id;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid Expense ID format"
+    })
+  }
+
+  try {
+
+    const deleteTask = await Tasks.findByIdAndDelete(req.params.id)
+    if (!deleteTask) {
+      return res.status(404).json({ message: "Task not found" })
+    }
+
+    res.status(200).json({
+      success: true,
+      data: deleteTask
+    })
+  }
+  catch (error) {
+    console.log(error)
+    res.status(500).json({
+      success: false,
+      message: "Failed to update Task"
+    });
+  }
+}
 
 
 
-module.exports = { getTasks, postTasks,putTasks }
+
+
+module.exports = { getTasks, postTasks, putTasks, deleteTasks }
