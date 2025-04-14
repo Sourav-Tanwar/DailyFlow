@@ -1,11 +1,11 @@
 const Tasks = require("../models/TaskSchema")
-const { body, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
 const mongoose = require("mongoose");
 
 const getTasks = async (req, res) => {
   console.log("GET Tasks")
   try {
-    const alltasks = await TaskModel.find();
+    const alltasks = await Tasks.find();
     if (!alltasks || alltasks.length === 0) {
       res.json({
         message: "No task added yet"
@@ -28,6 +28,11 @@ const getTasks = async (req, res) => {
 }
 
 const postTasks = async (req, res) => {
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   console.log("POST Tasks")
   console.log(req.body)
 
@@ -35,9 +40,9 @@ const postTasks = async (req, res) => {
 
   try {
     const Task = new Tasks({
-      title: title,
-      description: description,
-      status: status
+      title,
+      description,
+      status
     })
     const saveTasks = await Task.save()
 
@@ -51,6 +56,10 @@ const postTasks = async (req, res) => {
 
 
 const putTasks = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   console.log("PUT Tasks")
   console.log(req.body)
 
@@ -65,13 +74,12 @@ const putTasks = async (req, res) => {
   }
 
   try {
-
     const updateTask = await Tasks.findByIdAndUpdate(req.params.id, {
       title: title,
       description: description,
       status: status
     })
-    if (!updateTask) {
+    if (!updateTask) { 
       return res.status(404).json({ message: "Task not found" })
     }
 
