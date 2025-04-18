@@ -86,6 +86,26 @@ const loginUser = async (req, res) => {
   }
 }
 
-module.exports = { createUser, loginUser }
+const getUser = async (req, res) => {
+  try {
+    // userid= req.body.email;
+    userid = req.user.id;
+    console.log("User id :", userid)
+    const user = await User.findById(userid)
+    console.log("User id :", userid)
+
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+    res.send(user)
+  }
+  catch (error) {
+    console.error(error.message)
+    res.status(500).send("Internal Server Error");
+  }
+
+}
+
+module.exports = { createUser, loginUser, getUser }
 
 
