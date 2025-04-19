@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 
 const getExpense = async (req, res) => {
   try {
-    const allExpenses = await Expense.find();
+    const allExpenses = await Expense.find({ user: req.user.id });
 
     if (!allExpenses || allExpenses.length == 0) {
       res.json({
@@ -42,7 +42,8 @@ const postExpense = async (req, res) => {
     const Expenses = new Expense({
       expense: req.body.expense,
       amount: req.body.amount,
-      catogery: req.body.catogery
+      catogery: req.body.catogery,
+      user: req.user.id
     })
     const saveExpense = await Expenses.save()
 
@@ -76,8 +77,12 @@ const putExpense = async (req, res) => {
       message: "Invalid Expense ID format"
     })
   }
+  //   if(expense.user.toString() !== req.user.id){
+  //     return res.status(401).send("Not allowed")
+  // } 
 
   try {
+
     const updateExpense = await Expense.findByIdAndUpdate(
       req.params.id,
       { expense, amount, catogery },
@@ -86,6 +91,10 @@ const putExpense = async (req, res) => {
 
     if (!updateExpense) {
       return res.status(404).json({ message: "Expense not found" })
+    }
+
+    if (updateExpense.user.toString() !== req.user.id) {
+      return res.status(401).send("Not allowed")
     }
 
     res.status(200).json({
