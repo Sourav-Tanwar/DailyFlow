@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const getTasks = async (req, res) => {
   console.log("GET Tasks")
   try {
-    const alltasks = await Tasks.find();
+    const alltasks = await Tasks.find({ user: req.user.id });
     if (!alltasks || alltasks.length === 0) {
       res.json({
         message: "No task added yet"
@@ -42,7 +42,8 @@ const postTasks = async (req, res) => {
     const Task = new Tasks({
       title,
       description,
-      status
+      status,
+      user:req.user.id
     })
     const saveTasks = await Task.save()
 
@@ -79,7 +80,7 @@ const putTasks = async (req, res) => {
       description: description,
       status: status
     })
-    if (!updateTask) { 
+    if (!updateTask) {
       return res.status(404).json({ message: "Task not found" })
     }
 
@@ -129,9 +130,5 @@ const deleteTasks = async (req, res) => {
     });
   }
 }
-
-
-
-
 
 module.exports = { getTasks, postTasks, putTasks, deleteTasks }
