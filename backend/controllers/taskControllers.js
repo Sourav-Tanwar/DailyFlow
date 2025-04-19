@@ -43,7 +43,7 @@ const postTasks = async (req, res) => {
       title,
       description,
       status,
-      user:req.user.id
+      user: req.user.id
     })
     const saveTasks = await Task.save()
 

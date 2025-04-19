@@ -5,18 +5,18 @@ const { body } = require('express-validator');
 const fetchUser = require('../middleware/fetchUser')
 
 
-router.get("/Tasks",fetchUser, getTasks);
-router.post("/Tasks",fetchUser, [
+router.get("/Tasks", fetchUser, getTasks);
+router.post("/Tasks", fetchUser, [
   body('title').isLength({ min: 1 }),
   body('description').isLength({ min: 1 }),
   body('status').isLength({ min: 1 })
 ], postTasks);
 
-router.put("/Tasks/:id",fetchUser, [
+router.put("/Tasks/:id", fetchUser, [
   body('title').isLength({ min: 1 }),
   body('description').isLength({ min: 1 }),
   body('status').isLength({ min: 1 })
 ], putTasks);
-router.delete("/Tasks/:id", deleteTasks);
+router.delete("/Tasks/:id", fetchUser, deleteTasks);
 
 module.exports = router;
