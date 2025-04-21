@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const dotenv = require("dotenv")
 
-
 //loading .env file
 dotenv.config();
 

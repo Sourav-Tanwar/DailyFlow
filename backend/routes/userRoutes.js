@@ -4,7 +4,6 @@ const { createUser,loginUser, getUser } = require('../controllers/authController
 const { body, validationResult } = require('express-validator');
 const fetchUser = require('../middleware/fetchUser')
 
-
 router.post('/createUser',
   [body("name", "Enter a valid name").isLength({ min: 3 }),
   body('email', 'Enter a valid email').isEmail(),
@@ -19,6 +18,5 @@ router.post('/login',
   loginUser)
 
 router.post('/getUser',fetchUser,getUser )
-
 
 module.exports = router;

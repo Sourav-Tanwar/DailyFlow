@@ -3,9 +3,9 @@ const { body, validationResult } = require('express-validator');
 const mongoose = require("mongoose");
 
 const getExpense = async (req, res) => {
+  console.log("GET Expense")
   try {
     const allExpenses = await Expense.find({ user: req.user.id });
-
     if (!allExpenses || allExpenses.length == 0) {
       res.json({
         message: "No Expenses added yet."
@@ -36,7 +36,7 @@ const postExpense = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   console.log("POST request received")
-  console.log(req.body)
+  // console.log(req.body)
 
   try {
     const Expenses = new Expense({
@@ -46,7 +46,6 @@ const postExpense = async (req, res) => {
       user: req.user.id
     })
     const saveExpense = await Expenses.save()
-
     res.json(saveExpense).status(200)
   }
   catch (error) {
@@ -77,12 +76,8 @@ const putExpense = async (req, res) => {
       message: "Invalid Expense ID format"
     })
   }
-  //   if(expense.user.toString() !== req.user.id){
-  //     return res.status(401).send("Not allowed")
-  // } 
 
   try {
-
     const updateExpense = await Expense.findByIdAndUpdate(
       req.params.id,
       { expense, amount, catogery },
@@ -92,11 +87,9 @@ const putExpense = async (req, res) => {
     if (!updateExpense) {
       return res.status(404).json({ message: "Expense not found" })
     }
-
     if (updateExpense.user.toString() !== req.user.id) {
       return res.status(401).send("Not allowed")
     }
-
     res.status(200).json({
       success: true,
       data: updateExpense
@@ -113,8 +106,8 @@ const putExpense = async (req, res) => {
 }
 
 const deleteExpense = async (req, res) => {
-  console.log("DELETE request received")
-  // console.log(req.params.id)
+
+  console.log("Delete Expense")
   const id = req.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {

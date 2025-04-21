@@ -53,6 +53,7 @@ const createUser = async (req, res) => {
 }
 
 const loginUser = async (req, res) => {
+  console.log("LoginUser Request")
   let success = false;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -77,7 +78,6 @@ const loginUser = async (req, res) => {
     }
     const authtoken = jwt.sign(data, JWT_SECRET)
 
-    //res.json(user)
     success = true;
     res.json({ success, authtoken })
   } catch (error) {
@@ -87,8 +87,8 @@ const loginUser = async (req, res) => {
 }
 
 const getUser = async (req, res) => {
+  console.log("GetUser Request")
   try {
-    // userid= req.body.email;
     userid = req.user.id;
     console.log("User id :", userid)
     const user = await User.findById(userid)
@@ -103,7 +103,6 @@ const getUser = async (req, res) => {
     console.error(error.message)
     res.status(500).send("Internal Server Error");
   }
-
 }
 
 module.exports = { createUser, loginUser, getUser }

@@ -28,16 +28,14 @@ const getTasks = async (req, res) => {
 }
 
 const postTasks = async (req, res) => {
-
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
   console.log("POST Tasks")
-  console.log(req.body)
+  // console.log(req.body)
 
   const { title, description, status } = req.body;
-
   try {
     const Task = new Tasks({
       title,
@@ -46,7 +44,6 @@ const postTasks = async (req, res) => {
       user: req.user.id
     })
     const saveTasks = await Task.save()
-
     res.status(200).json(saveTasks)
   }
   catch (error) {
@@ -62,8 +59,7 @@ const putTasks = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   console.log("PUT Tasks")
-  console.log(req.body)
-
+  // console.log(req.body)
   const { title, description, status } = req.body;
   const id = req.params.id;
 

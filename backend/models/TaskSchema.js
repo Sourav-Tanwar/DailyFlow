@@ -20,10 +20,6 @@ const TaskSchema = new Schema({
     type: String,
     default: "Pending"
   },
-  // tag: {
-  //   type: String,
-  //   default: "General"
-  // },
   Creation_Date: {
     type: Date,
     default: Date.now

@@ -4,7 +4,6 @@ const { getTasks, postTasks, putTasks, deleteTasks } = require('../controllers/t
 const { body } = require('express-validator');
 const fetchUser = require('../middleware/fetchUser')
 
-
 router.get("/Tasks", fetchUser, getTasks);
 router.post("/Tasks", fetchUser, [
   body('title').isLength({ min: 1 }),

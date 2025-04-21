@@ -4,7 +4,6 @@ const { getExpense, postExpense, putExpense, deleteExpense } = require("../contr
 const { body, validationResult } = require('express-validator');
 const fetchUser = require('../middleware/fetchUser')
 
-// const Expense = require('../models/ExpenseSchema');
 
 router.get('/Expense',fetchUser ,getExpense);
 router.post("/Expense",fetchUser, [
