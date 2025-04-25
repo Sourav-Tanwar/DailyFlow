@@ -5,9 +5,11 @@ const port = process.env.PORT
 const expenseRoutes = require("./routes/expenseRoutes")
 const tasksRoutes = require('./routes/tasksRoutes')
 const userRoutes = require('./routes/userRoutes')
+const cors = require("cors");
 
 
 connectDB();
+app.use(cors());
 app.use(express.json())
 
 app.get("/", (req, res) => {
