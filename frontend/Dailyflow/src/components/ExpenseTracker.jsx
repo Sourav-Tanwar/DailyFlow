@@ -21,16 +21,6 @@ const ExpenseTracker = () => {
   }, [])
   console.log(expenses)
 
-  // const expenseDate = () => {
-  //   const isoDate = "2025-04-19T05:59:55.412Z";
-  //   const date = new Date(isoDate);
-  //   const options = { day: 'numeric', month: 'long', year: 'numeric' };
-  //   const formattedDate = date.toLocaleDateString('en-GB', options);
-  //   // console.log(formattedDate); 
-  //   // Outputs: "19 April 2025"
-  //   return formattedDate
-  // }
-
   // Format a date like '19 April 2025'
   const formatDate = (isoDate) => {
     const date = new Date(isoDate);
@@ -49,7 +39,7 @@ const ExpenseTracker = () => {
       const currentMonth = now.getMonth(); // 0-indexed
       const currentYear = now.getFullYear();
   
-      expenses.forEach((expense) => {
+      if (expenses){expenses.forEach((expense) => {
         const date = new Date(expense.creation_Date);
         const expenseMonth = date.getMonth();
         const expenseYear = date.getFullYear();
@@ -65,6 +55,7 @@ const ExpenseTracker = () => {
           }
         }
       });
+    }
   
       return { thisMonthTotal, lastMonthTotal, thisYearTotal };
     }, [expenses]);
