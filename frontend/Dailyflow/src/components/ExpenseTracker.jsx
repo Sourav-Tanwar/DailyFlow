@@ -1,4 +1,5 @@
-import React, { useEffect, useState,useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import Navbar from "./Navbar"
 
 const ExpenseTracker = () => {
   const [expenses, setExpense] = useState([])
@@ -29,24 +30,25 @@ const ExpenseTracker = () => {
   };
 
 
-    // Calculate this month, last month, and this year totals
-    const { thisMonthTotal, lastMonthTotal, thisYearTotal } = useMemo(() => {
-      let thisMonthTotal = 0;
-      let lastMonthTotal = 0;
-      let thisYearTotal = 0;
-  
-      const now = new Date();
-      const currentMonth = now.getMonth(); // 0-indexed
-      const currentYear = now.getFullYear();
-  
-      if (expenses){expenses.forEach((expense) => {
+  // Calculate this month, last month, and this year totals
+  const { thisMonthTotal, lastMonthTotal, thisYearTotal } = useMemo(() => {
+    let thisMonthTotal = 0;
+    let lastMonthTotal = 0;
+    let thisYearTotal = 0;
+
+    const now = new Date();
+    const currentMonth = now.getMonth(); // 0-indexed
+    const currentYear = now.getFullYear();
+
+    if (expenses) {
+      expenses.forEach((expense) => {
         const date = new Date(expense.creation_Date);
         const expenseMonth = date.getMonth();
         const expenseYear = date.getFullYear();
-  
+
         if (expenseYear === currentYear) {
           thisYearTotal += expense.amount;
-  
+
           if (expenseMonth === currentMonth) {
             thisMonthTotal += expense.amount;
           } else if (expenseMonth === currentMonth - 1 || (currentMonth === 0 && expenseMonth === 11)) {
@@ -56,12 +58,13 @@ const ExpenseTracker = () => {
         }
       });
     }
-  
-      return { thisMonthTotal, lastMonthTotal, thisYearTotal };
-    }, [expenses]);
+
+    return { thisMonthTotal, lastMonthTotal, thisYearTotal };
+  }, [expenses]);
 
   return (
     <>
+      <Navbar></Navbar>
       <div className="bg-gray-100">
         <div className="max-w-6xl mx-auto p-6">
           <h1 className="text-3xl font-bold mb-6">Expense Dashboard</h1>

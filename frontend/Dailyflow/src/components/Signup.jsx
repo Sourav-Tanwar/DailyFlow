@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import Navbar from "./Navbar"
 
 export default function Login() {
 
@@ -39,7 +40,7 @@ export default function Login() {
   }
   return (
     <>
-
+      <Navbar></Navbar>
       <div className="container">
         <form className="max-w-sm mx-auto" onSubmit={handleSubmit}>
           <div className="mb-5">
