@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from "./Navbar"
+import { useSelector, useDispatch } from 'react-redux';
+import { setCredentials } from '../features/auth/authSlice';
 
 export default function Login() {
 
-  const [credentials, setcredentials] = useState({ email: "", password: "" })
+  const dispatch = useDispatch();
+
+  // const [credentials, setcredentials] = useState({ email: "", password: "" })+
   let Navigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +29,6 @@ export default function Login() {
     if (json.success) {
       localStorage.setItem("userEmail", credentials.email);
       localStorage.setItem("authToken", json.authtoken);
-      // console.log(localStorage.getItem("userEmail","authtoken" ))
       Navigate("/expense")
     }
 
