@@ -1,7 +1,5 @@
 // src/features/auth/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { useNavigate } from 'react-router-dom'
-
 
 export const signupUser = createAsyncThunk(
   'auth/createUser',
@@ -39,8 +37,6 @@ export const signupUser = createAsyncThunk(
   } 
 )
 
-
-
 export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async ({ email, password }, thunkAPI) => {
@@ -64,7 +60,6 @@ export const loginUser = createAsyncThunk(
     catch (error) {
       console.log(error)
       return thunkAPI.rejectWithValue("Login failed. Server error.");
-
     }
   }
 )
@@ -81,8 +76,8 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null,
-        state.token = null,
-        localStorage.removeItem("userEmail")
+      state.token = null,
+      localStorage.removeItem("userEmail")
       localStorage.removeItem("authToken")
     },
   },

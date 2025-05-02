@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Navbar from "./Navbar"
-import { useSelector, useDispatch } from 'react-redux';
 import { signupUser } from '../features/auth/authSlice';
-
+import { useSelector, useDispatch } from 'react-redux';
 export default function Login() {
   const dispatch = useDispatch();
   const [newUser, setnewUser] = useState({ name: "", email: "", password: "", confirmPass: "" })

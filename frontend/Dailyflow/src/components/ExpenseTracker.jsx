@@ -7,7 +7,7 @@ const ExpenseTracker = () => {
   const fetchMyExpense = async () => {
     await fetch("http://localhost:3000/api/Expense", {
       method: 'GET',
-      headers: {
+      headers: { 
         'Content-Type': 'application/json',
         "auth-token": localStorage.getItem('authToken')
       },
