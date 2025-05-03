@@ -1,25 +1,36 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Navbar from "./Navbar"
+import { useDispatch, useSelector } from 'react-redux';
+import { getExpense } from '../features/expense/expenseSlice';
 
 const ExpenseTracker = () => {
-  const [expenses, setExpense] = useState([])
-  // console.log(localStorage.getItem('authToken'))
-  const fetchMyExpense = async () => {
-    await fetch("http://localhost:3000/api/Expense", {
-      method: 'GET',
-      headers: { 
-        'Content-Type': 'application/json',
-        "auth-token": localStorage.getItem('authToken')
-      },
-    }).then(async (res) => {
-      let response = await res.json()
+  // const [expenses, setExpense] = useState([])
+  const dispatch = useDispatch();
+  const { expenses, loading, error } = useSelector((state) => state.expense)
 
-      await setExpense(response.Expense)
-    })
+  const fetchMyExpense = async () => {
+    dispatch(getExpense())
   }
+
+
+
+  // console.log(localStorage.getItem('authToken'))
+  // const fetchMyExpense = async () => {
+  //   await fetch("http://localhost:3000/api/Expense", {
+  //     method: 'GET',
+  //     headers: { 
+  //       'Content-Type': 'application/json',
+  //       "auth-token": localStorage.getItem('authToken')
+  //     },
+  //   }).then(async (res) => {
+  //     let response = await res.json()
+
+  //     await setExpense(response.Expense)
+  //   })
+  // }
   useEffect(() => {
     fetchMyExpense()
-  }, [])
+  }, [dispatch])
   console.log(expenses)
 
   // Format a date like '19 April 2025'
