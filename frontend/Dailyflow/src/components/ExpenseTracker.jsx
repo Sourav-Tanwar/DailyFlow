@@ -7,29 +7,12 @@ const ExpenseTracker = () => {
   // const [expenses, setExpense] = useState([])
   const dispatch = useDispatch();
   const { expenses, loading, error } = useSelector((state) => state.expense)
-
-  const fetchMyExpense = async () => {
-    dispatch(getExpense())
-  }
+  const [showForm, setShowForm] = useState(false)
 
 
 
-  // console.log(localStorage.getItem('authToken'))
-  // const fetchMyExpense = async () => {
-  //   await fetch("http://localhost:3000/api/Expense", {
-  //     method: 'GET',
-  //     headers: { 
-  //       'Content-Type': 'application/json',
-  //       "auth-token": localStorage.getItem('authToken')
-  //     },
-  //   }).then(async (res) => {
-  //     let response = await res.json()
-
-  //     await setExpense(response.Expense)
-  //   })
-  // }
   useEffect(() => {
-    fetchMyExpense()
+    dispatch(getExpense())
   }, [dispatch])
   console.log(expenses)
 
@@ -39,8 +22,6 @@ const ExpenseTracker = () => {
     const options = { day: 'numeric', month: 'long', year: 'numeric' };
     return date.toLocaleDateString('en-GB', options);
   };
-
-
   // Calculate this month, last month, and this year totals
   const { thisMonthTotal, lastMonthTotal, thisYearTotal } = useMemo(() => {
     let thisMonthTotal = 0;
@@ -69,9 +50,34 @@ const ExpenseTracker = () => {
         }
       });
     }
-
     return { thisMonthTotal, lastMonthTotal, thisYearTotal };
   }, [expenses]);
+
+  function toggleShowForm() {
+    setShowForm(prev => !prev)
+  }
+
+  const addExpenseForm = () => {
+    console.log('addExpense')
+    return (
+      <>
+        <form class="max-w-sm mb-3 mx-auto">
+          <div class="mb-5">
+            <label htmlFor="base-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Expense</label>
+            <input type="text" id="base-input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+          </div>
+          <div class="mb-5">
+            <label htmlFor="base-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+            <input type="text" id="base-input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+          </div>
+          <div class="mb-5">
+            <label htmlFor="base-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
+            <input type="text" id="base-input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+          </div>
+        </form>
+      </>
+    )
+  }
 
   return (
     <>
@@ -80,10 +86,17 @@ const ExpenseTracker = () => {
         <div className="max-w-6xl mx-auto p-6">
           <h1 className="text-3xl font-bold mb-6">Expense Dashboard</h1>
           <button className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">
-            <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
+            <span onClick={toggleShowForm} className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
               Add Expense
             </span>
           </button>
+
+          
+          {showForm && (
+              <div className="mt-6">
+                {addExpenseForm()}
+              </div>
+            )}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-xl shadow p-6">
@@ -116,7 +129,7 @@ const ExpenseTracker = () => {
                   <tr key={index}>
                     <td className="px-4 py-2">{formatDate(expense.creation_Date)}</td>
                     <td className="px-4 py-2">{expense.expense}</td>
-                    <td className="px-4 py-2">{expense.catogery}</td>
+                    <td className="px-4 py-2">{expense.category}</td>
                     <td className="px-4 py-2 text-red-500">- ${expense.amount}</td>
                   </tr>
                 ))}
