@@ -1,20 +1,19 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Navbar from "./Navbar"
 import { useDispatch, useSelector } from 'react-redux';
-import { getExpense } from '../features/expense/expenseSlice';
+import { getExpense, addExpense } from '../features/expense/expenseSlice';
 
 const ExpenseTracker = () => {
   // const [expenses, setExpense] = useState([])
   const dispatch = useDispatch();
   const { expenses, loading, error } = useSelector((state) => state.expense)
   const [showForm, setShowForm] = useState(false)
-
-
+  const [newExpense, setnewExpense] = useState({ expense: '', category: '', amount: '' })
 
   useEffect(() => {
     dispatch(getExpense())
   }, [dispatch])
-  console.log(expenses)
+  // console.log(expenses)
 
   // Format a date like '19 April 2025'
   const formatDate = (isoDate) => {
@@ -34,6 +33,7 @@ const ExpenseTracker = () => {
 
     if (expenses) {
       expenses.forEach((expense) => {
+        if (!expense || !expense.creation_Date || isNaN(expense.amount)) return;
         const date = new Date(expense.creation_Date);
         const expenseMonth = date.getMonth();
         const expenseYear = date.getFullYear();
@@ -57,27 +57,62 @@ const ExpenseTracker = () => {
     setShowForm(prev => !prev)
   }
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!newExpense.expense || !newExpense.category || !newExpense.amount) {
+      alert("Please fill out all fields");
+      return;
+    }
+
+    const resultAction = await dispatch(addExpense(newExpense));
+    console.log(resultAction)
+
+    if (resultAction.meta.requestStatus === 'rejected') {
+      alert("Failed to add expense: " + resultAction.error.message);
+    }
+
+
+    if (resultAction.meta.requestStatus === 'fulfilled') {
+      setnewExpense({ expense: '', category: '', amount: '' });
+      setShowForm(false);
+      await dispatch(getExpense());
+    }
+
+
+  }
+
   const addExpenseForm = () => {
     console.log('addExpense')
     return (
       <>
-        <form class="max-w-sm mb-3 mx-auto">
-          <div class="mb-5">
-            <label htmlFor="base-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Expense</label>
-            <input type="text" id="base-input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+        <form onSubmit={handleSubmit} className="max-w-sm mb-3 mx-auto">
+          <div className="mb-5">
+            <label htmlFor="expense" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Expense</label>
+            <input type="text" name='expense' id="expense" value={newExpense.expense} onChange={onChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
           </div>
-          <div class="mb-5">
-            <label htmlFor="base-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
-            <input type="text" id="base-input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+          <div className="mb-5">
+            <label htmlFor="category" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+            <input type="text" name='category' id="category" onChange={onChange} value={newExpense.category} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
           </div>
-          <div class="mb-5">
-            <label htmlFor="base-input" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
-            <input type="text" id="base-input" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+          <div className="mb-5">
+            <label htmlFor="amount" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
+            <input type="number" name='amount' id="amount" onChange={onChange} value={newExpense.amount} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
           </div>
+          <button type="submit" disabled={loading} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{loading ? "Adding..." : "Add Expense"}</button>
+          {/* {error && <p className="text-red-500 mt-2">{error}</p>} */}
         </form>
       </>
     )
   }
+
+  const onChange = (event) => {
+    if (event.target.name === 'amount') {
+      setnewExpense({ ...newExpense, amount: parseFloat(event.target.value) });
+    } else {
+      setnewExpense({ ...newExpense, [event.target.name]: event.target.value });
+    }
+  }
+  console.log(newExpense)
 
   return (
     <>
@@ -91,12 +126,12 @@ const ExpenseTracker = () => {
             </span>
           </button>
 
-          
+
           {showForm && (
-              <div className="mt-6">
-                {addExpenseForm()}
-              </div>
-            )}
+            <div className="mt-6">
+              {addExpenseForm()}
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-xl shadow p-6">
@@ -125,14 +160,17 @@ const ExpenseTracker = () => {
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(expenses) && expenses.map((expense, index) => (
+                {Array.isArray(expenses) && expenses.map((expense, index) =>{ 
+                if (!expense || !expense.creation_Date || isNaN(expense.amount)) return null;
+                return(
                   <tr key={index}>
                     <td className="px-4 py-2">{formatDate(expense.creation_Date)}</td>
                     <td className="px-4 py-2">{expense.expense}</td>
                     <td className="px-4 py-2">{expense.category}</td>
                     <td className="px-4 py-2 text-red-500">- ${expense.amount}</td>
                   </tr>
-                ))}
+                )}
+                )}
 
                 {/* <tr>
                   <td className="px-4 py-2">Apr 21</td>

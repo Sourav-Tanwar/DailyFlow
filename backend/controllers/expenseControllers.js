@@ -42,7 +42,7 @@ const postExpense = async (req, res) => {
     const Expenses = new Expense({
       expense: req.body.expense,
       amount: req.body.amount,
-      catogery: req.body.catogery,
+      category: req.body.category,
       user: req.user.id
     })
     const saveExpense = await Expenses.save()
@@ -67,7 +67,7 @@ const putExpense = async (req, res) => {
   // console.log(req.body)
   // console.log(req.params.id)
 
-  const { expense, amount, catogery } = req.body;
+  const { expense, amount, category } = req.body;
   const id = req.params.id;
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -80,7 +80,7 @@ const putExpense = async (req, res) => {
   try {
     const updateExpense = await Expense.findByIdAndUpdate(
       req.params.id,
-      { expense, amount, catogery },
+      { expense, amount, category },
       { new: true } // return the updated document
     );
 
