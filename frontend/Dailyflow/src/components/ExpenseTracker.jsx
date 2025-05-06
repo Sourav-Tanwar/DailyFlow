@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import Navbar from "./Navbar"
 import { useDispatch, useSelector } from 'react-redux';
 import { getExpense, addExpense } from '../features/expense/expenseSlice';
+import { MdOutlineEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 
 const ExpenseTracker = () => {
@@ -158,11 +159,16 @@ const ExpenseTracker = () => {
                   <th className="px-4 py-2">Expense</th>
                   <th className="px-4 py-2">Category</th>
                   <th className="px-4 py-2">Amount</th>
+                  <th className="px-4 py-2">Edit</th>
                   <th className="px-4 py-2">Delete</th>
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(expenses) && expenses.map((expense, index) =>{ 
+                {
+                // Array.isArray(expenses) && expenses.map((expense, index) =>{ 
+                Array.isArray(expenses) && [...expenses]
+                .sort((a, b) => new Date(b.creation_Date) - new Date(a.creation_Date))
+                .map((expense, index) => {
                 if (!expense || !expense.creation_Date || isNaN(expense.amount)) return null;
                 return(
                   <tr key={index}>
@@ -170,6 +176,7 @@ const ExpenseTracker = () => {
                     <td className="px-4 py-2">{expense.expense}</td>
                     <td className="px-4 py-2">{expense.category}</td>
                     <td className="px-4 py-2 text-red-500">- ${expense.amount}</td>
+                    <td className="px-4 py-2 text-m"><MdOutlineEdit size={22}/></td>
                     <td className="px-4 py-2 text-m"><MdDelete size={22} /></td>
                   </tr>
                 )}

@@ -43,11 +43,9 @@ export const addExpense = createAsyncThunk(
         },
         body: JSON.stringify(expenseData)
       })
-
       const data = await response.json();
       console.log(data)
       dispatch(addExpenseSuccess(data.Expense))
-
     }
     catch (error) {
       dispatch(addExpenseFailure(error.message))
