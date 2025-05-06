@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getExpense, addExpense } from '../features/expense/expenseSlice';
 import { MdOutlineEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
+import { FaIndianRupeeSign } from "react-icons/fa6";
 
 const ExpenseTracker = () => {
   // const [expenses, setExpense] = useState([])
@@ -138,15 +139,15 @@ const ExpenseTracker = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-xl shadow p-6">
               <h2 className="text-gray-700">This Month</h2>
-              <p className="text-2xl font-bold mt-2">${thisMonthTotal}</p>
+              <p className="text-2xl font-bold mt-2 flex items-center"><FaIndianRupeeSign size={20} />{thisMonthTotal}</p>
             </div>
             <div className="bg-white rounded-xl shadow p-6">
               <h2 className="text-gray-700">Last Month</h2>
-              <p className="text-2xl font-bold mt-2">${lastMonthTotal}</p>
+              <p className="text-2xl font-bold mt-2 flex items-center"><FaIndianRupeeSign size={20} />{lastMonthTotal}</p>
             </div>
             <div className="bg-white rounded-xl shadow p-6">
               <h2 className="text-gray-700">Year Total</h2>
-              <p className="text-2xl font-bold mt-2">${thisYearTotal}</p>
+              <p className="text-2xl font-bold mt-2 flex items-center"><FaIndianRupeeSign size={20} />{thisYearTotal}</p>
             </div>
           </div>
 
