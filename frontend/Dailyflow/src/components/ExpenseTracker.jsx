@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Navbar from "./Navbar"
 import { useDispatch, useSelector } from 'react-redux';
-import { getExpense, addExpense } from '../features/expense/expenseSlice';
+import { getExpense, addExpense, deleteExpense } from '../features/expense/expenseSlice';
 import { MdOutlineEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { FaIndianRupeeSign } from "react-icons/fa6";
@@ -80,8 +80,24 @@ const ExpenseTracker = () => {
       setShowForm(false);
       await dispatch(getExpense());
     }
+  }
 
-
+  const handleDelete = async (expenseId)=>{
+    console.log(expenseId)
+    const confirmDelete = window.confirm("Are you sure you want to delete this expense?");
+  if (!confirmDelete) return;
+   try{
+    const resultAction = await dispatch(deleteExpense(expenseId));
+    if (resultAction.meta.requestStatus === "fulfilled") {
+      // Optional: Refetch to ensure backend consistency
+      await dispatch(getExpense());
+    } else {
+      alert("Failed to delete expense");
+    }
+   }catch(error){
+    console.error("Delete failed:", error);
+    alert("Failed to delete expense");
+   }
   }
 
   const addExpenseForm = () => {
@@ -166,22 +182,23 @@ const ExpenseTracker = () => {
               </thead>
               <tbody>
                 {
-                // Array.isArray(expenses) && expenses.map((expense, index) =>{ 
-                Array.isArray(expenses) && [...expenses]
-                .sort((a, b) => new Date(b.creation_Date) - new Date(a.creation_Date))
-                .map((expense, index) => {
-                if (!expense || !expense.creation_Date || isNaN(expense.amount)) return null;
-                return(
-                  <tr key={index}>
-                    <td className="px-4 py-2">{formatDate(expense.creation_Date)}</td>
-                    <td className="px-4 py-2">{expense.expense}</td>
-                    <td className="px-4 py-2">{expense.category}</td>
-                    <td className="px-4 py-2 text-red-500">- ${expense.amount}</td>
-                    <td className="px-4 py-2 text-m"><MdOutlineEdit size={22}/></td>
-                    <td className="px-4 py-2 text-m"><MdDelete size={22} /></td>
-                  </tr>
-                )}
-                )}
+                  // Array.isArray(expenses) && expenses.map((expense, index) =>{ 
+                  Array.isArray(expenses) && [...expenses]
+                    .sort((a, b) => new Date(b.creation_Date) - new Date(a.creation_Date))
+                    .map((expense, index) => {
+                      if (!expense || !expense.creation_Date || isNaN(expense.amount)) return null;
+                      return (
+                        <tr key={index}>
+                          <td className="px-4 py-2">{formatDate(expense.creation_Date)}</td>
+                          <td className="px-4 py-2">{expense.expense}</td>
+                          <td className="px-4 py-2">{expense.category}</td>
+                          <td className="px-4 py-2 text-red-500 flex items-center">- <FaIndianRupeeSign />{expense.amount}</td>
+                          <td className="px-4 py-2 text-m"><MdOutlineEdit  size={22} /></td>
+                          <td className="px-4 py-2 text-m"><MdDelete onClick={()=>handleDelete(expense._id)} size={22} /></td>
+                        </tr>
+                      )
+                    }
+                    )}
 
                 {/* <tr>
                   <td className="px-4 py-2">Apr 21</td>
