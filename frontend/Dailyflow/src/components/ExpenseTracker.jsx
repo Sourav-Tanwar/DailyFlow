@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Navbar from "./Navbar"
 import { useDispatch, useSelector } from 'react-redux';
-import { getExpense, addExpense, deleteExpense } from '../features/expense/expenseSlice';
+import { getExpense, addExpense,updateExpense, deleteExpense } from '../features/expense/expenseSlice';
 import { MdOutlineEdit } from "react-icons/md";
 import { MdDelete } from "react-icons/md";
 import { FaIndianRupeeSign } from "react-icons/fa6";
@@ -12,6 +12,7 @@ const ExpenseTracker = () => {
   const { expenses, loading, error } = useSelector((state) => state.expense)
   const [showForm, setShowForm] = useState(false)
   const [newExpense, setnewExpense] = useState({ expense: '', category: '', amount: '' })
+  const [editExpenseId, setEditExpenseId] = useState(null);
 
   useEffect(() => {
     dispatch(getExpense())
@@ -56,9 +57,7 @@ const ExpenseTracker = () => {
     return { thisMonthTotal, lastMonthTotal, thisYearTotal };
   }, [expenses]);
 
-  function toggleShowForm() {
-    setShowForm(prev => !prev)
-  }
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,26 +66,55 @@ const ExpenseTracker = () => {
       return;
     }
 
-    const resultAction = await dispatch(addExpense(newExpense));
-    console.log(resultAction)
+    if (editExpenseId) {
 
-    if (resultAction.meta.requestStatus === 'rejected') {
-      alert("Failed to add expense: " + resultAction.error.message);
+      console.log(editExpenseId)
+      const resultAction = await dispatch(updateExpense(editExpenseId,newExpense));
+      console.log(resultAction)
+      if (resultAction.meta.requestStatus === 'rejected') {
+        alert("Failed to update expense: "+ resultAction.error.message);
+      }
+      else{
+        setShowForm(false);
+        setnewExpense({ expense: '', category: '', amount: '' });
+        setEditExpenseId(null);
+        await dispatch(getExpense());
+      }
     }
-
-
-    if (resultAction.meta.requestStatus === 'fulfilled') {
-      setnewExpense({ expense: '', category: '', amount: '' });
-      setShowForm(false);
-      await dispatch(getExpense());
+    
+    else {
+      const resultAction = await dispatch(addExpense(newExpense));
+      console.log(resultAction)
+      if (resultAction.meta.requestStatus === 'rejected') {
+        alert("Failed to add expense: " + resultAction.error.message);
+      }
+      if (resultAction.meta.requestStatus === 'fulfilled') {
+        setnewExpense({ expense: '', category: '', amount: '' });
+        setShowForm(false);
+        await dispatch(getExpense());
+      }
     }
   }
 
-  const handleDelete = async (expenseId)=>{
-    console.log(expenseId)
-    const confirmDelete = window.confirm("Are you sure you want to delete this expense?");
+
+const handleEdit = (expense) => {
+  setShowForm(true)
+  setnewExpense({
+    expense: expense.expense,
+    category: expense.category,
+    amount: expense.amount
+  });
+  setEditExpenseId(expense._id)
+  console.log(editExpenseId,newExpense )
+}
+
+
+
+const handleDelete = async (expenseId) => {
+  console.log(expenseId)
+  const confirmDelete = window.confirm("Are you sure you want to delete this expense?");
   if (!confirmDelete) return;
-   try{
+  try {
     const resultAction = await dispatch(deleteExpense(expenseId));
     if (resultAction.meta.requestStatus === "fulfilled") {
       // Optional: Refetch to ensure backend consistency
@@ -94,11 +122,11 @@ const ExpenseTracker = () => {
     } else {
       alert("Failed to delete expense");
     }
-   }catch(error){
+  } catch (error) {
     console.error("Delete failed:", error);
     alert("Failed to delete expense");
-   }
   }
+}
 
   const addExpenseForm = () => {
     console.log('addExpense')
@@ -106,7 +134,7 @@ const ExpenseTracker = () => {
       <>
         <form onSubmit={handleSubmit} className="max-w-sm mb-3 mx-auto">
           <div className="mb-5">
-            <label htmlFor="expense" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Expense</label>
+            <label htmlFor="expense" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> {editExpenseId ? "Edit Expense" : "Add Expense"}</label>
             <input type="text" name='expense' id="expense" value={newExpense.expense} onChange={onChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
           </div>
           <div className="mb-5">
@@ -117,12 +145,25 @@ const ExpenseTracker = () => {
             <label htmlFor="amount" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
             <input type="number" name='amount' id="amount" onChange={onChange} value={newExpense.amount} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
           </div>
-          <button type="submit" disabled={loading} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{loading ? "Adding..." : "Add Expense"}</button>
+          <button type="submit" disabled={loading} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{loading ? (editExpenseId ? "Updating..." : "Adding...") :(editExpenseId ? "Update Expense" : "Add Expense")}</button>
           {/* {error && <p className="text-red-500 mt-2">{error}</p>} */}
         </form>
       </>
     )
   }
+
+
+function toggleShowForm() {
+  setShowForm(prev => {
+    const newShowForm = !prev;
+    if (!newShowForm) {
+      setEditExpenseId(null); // reset edit state
+      setnewExpense({ expense: '', category: '', amount: '' });
+    }
+    return newShowForm;
+  });
+  
+}
 
   const onChange = (event) => {
     if (event.target.name === 'amount') {
@@ -131,7 +172,7 @@ const ExpenseTracker = () => {
       setnewExpense({ ...newExpense, [event.target.name]: event.target.value });
     }
   }
-  console.log(newExpense)
+  // console.log(newExpense)
 
   return (
     <>
@@ -141,7 +182,8 @@ const ExpenseTracker = () => {
           <h1 className="text-3xl font-bold mb-6">Expense Dashboard</h1>
           <button className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 group-hover:from-purple-600 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800">
             <span onClick={toggleShowForm} className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">
-              Add Expense
+              {/* Add Expense */}
+              {editExpenseId ? "Edit Expense" : "Add Expense"}
             </span>
           </button>
 
@@ -193,8 +235,8 @@ const ExpenseTracker = () => {
                           <td className="px-4 py-2">{expense.expense}</td>
                           <td className="px-4 py-2">{expense.category}</td>
                           <td className="px-4 py-2 text-red-500 flex items-center">- <FaIndianRupeeSign />{expense.amount}</td>
-                          <td className="px-4 py-2 text-m"><MdOutlineEdit  size={22} /></td>
-                          <td className="px-4 py-2 text-m"><MdDelete onClick={()=>handleDelete(expense._id)} size={22} /></td>
+                          <td className="px-4 py-2 text-m"><MdOutlineEdit onClick={() => handleEdit(expense)} size={22} className="cursor-pointer hover:text-green-800" /></td>
+                          <td className="px-4 py-2 text-m"><MdDelete onClick={() => handleDelete(expense._id)} size={22} className="cursor-pointer hover:text-red-800" /></td>
                         </tr>
                       )
                     }

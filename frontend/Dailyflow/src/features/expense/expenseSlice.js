@@ -23,6 +23,9 @@ export const getExpense = () => async (dispatch) => {
   }
 };
 
+
+
+
 export const addExpense = createAsyncThunk(
   "expense/addExpense",
   async (expenseData, thunkAPI) => {
@@ -50,6 +53,38 @@ export const addExpense = createAsyncThunk(
     }
   }
 );
+
+export const updateExpense = (expenseId,updatedData) => async (dispatch) => {
+  dispatch(updateExpenseStart())
+  const token = localStorage.getItem("authToken");
+  // console.log(expenseId)
+  console.log(updatedData)
+    if (!token) {
+      return { meta: { requestStatus: 'rejected' }, error: { message: error } };
+    }
+  try {
+    const response = await fetch(`http://localhost:3000/api/Expense/${expenseId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' ,
+      "auth-token": localStorage.getItem("authToken")
+      },
+      body: JSON.stringify(updatedData)
+    });
+
+    const data = await response.json();
+    console.log("Updated Data", data)
+
+    if (!response.ok) {
+      throw new Error(data.message || "Edit failed");
+    }
+    dispatch(updateExpenseSuccess(data))
+    return { meta: { requestStatus: 'fulfilled' } };
+  } catch (error) {
+    console.error("Update failed:", error);
+    dispatch(updateExpenseFailure(error.message));
+    return { meta: { requestStatus: 'fulfilled' } };
+  }
+}
 
 export const deleteExpense = createAsyncThunk(
   "expense/deleteExpense",
@@ -117,6 +152,18 @@ export const expenseSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    updateExpenseStart(state){
+      state.loading =true;
+      state.error = null;
+    },
+    updateExpenseSuccess(state,action){
+      state.loading = false;
+      state.expenses = state.expenses.filter(exp=>exp._id != action.payload)
+    },
+    updateExpenseFailure(state,action){
+      state.loading=false;
+      state.error = action.payload;
+    },
     deleteExpenseStart(state) {
       state.loading = true;
       state.error = null;
@@ -141,6 +188,9 @@ export const {
   addExpenseFailure,
   deleteExpenseStart,
   deleteExpenseSuccess,
-  deleteExpenseFailure
+  deleteExpenseFailure,
+  updateExpenseStart,
+  updateExpenseSuccess,
+  updateExpenseFailure
 } = expenseSlice.actions;
 export default expenseSlice.reducer;
