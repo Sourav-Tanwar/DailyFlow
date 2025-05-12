@@ -19,7 +19,7 @@ export const getExpense = () => async (dispatch) => {
     // console.log(data.expense)
     dispatch(fetchExpensesSuccess(data.Expense));
   } catch (error) {
-    dispatch(fetchExpensesFailure(error));
+    dispatch(fetchExpensesFailure(error.message));
   }
 };
 
@@ -54,19 +54,20 @@ export const addExpense = createAsyncThunk(
   }
 );
 
-export const updateExpense = (expenseId,updatedData) => async (dispatch) => {
+export const updateExpense = (expenseId, updatedData) => async (dispatch) => {
   dispatch(updateExpenseStart())
   const token = localStorage.getItem("authToken");
   // console.log(expenseId)
   console.log(updatedData)
-    if (!token) {
-      return { meta: { requestStatus: 'rejected' }, error: { message: error } };
-    }
+  if (!token) {
+    return { meta: { requestStatus: 'rejected' }, error: { message: error } };
+  }
   try {
     const response = await fetch(`http://localhost:3000/api/Expense/${expenseId}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' ,
-      "auth-token": localStorage.getItem("authToken")
+      headers: {
+        'Content-Type': 'application/json',
+        "auth-token": localStorage.getItem("authToken")
       },
       body: JSON.stringify(updatedData)
     });
@@ -104,9 +105,9 @@ export const deleteExpense = createAsyncThunk(
           "auth-token": localStorage.getItem("authToken"),
         },
       });
-    
+
       const data = await response.json();
-      console.log("Deleted Expense",data)
+      console.log("Deleted Expense", data)
       if (!response.ok) {
         throw new Error(data.message || "Delete failed");
       }
@@ -152,16 +153,20 @@ export const expenseSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    updateExpenseStart(state){
-      state.loading =true;
+    updateExpenseStart(state) {
+      state.loading = true;
       state.error = null;
     },
-    updateExpenseSuccess(state,action){
+    updateExpenseSuccess(state, action) {
       state.loading = false;
-      state.expenses = state.expenses.filter(exp=>exp._id != action.payload)
+      const index = state.expenses.findIndex(exp => exp._id === action.payload._id);
+      if (index !== -1) {
+        state.expenses[index] = action.payload;
+      }
+      // state.expenses = state.expenses.filter(exp => exp._id != action.payload)
     },
-    updateExpenseFailure(state,action){
-      state.loading=false;
+    updateExpenseFailure(state, action) {
+      state.loading = false;
       state.error = action.payload;
     },
     deleteExpenseStart(state) {
@@ -170,7 +175,7 @@ export const expenseSlice = createSlice({
     },
     deleteExpenseSuccess(state, action) {
       state.loading = false;
-      state.expenses = state.expenses.filter(exp=>exp._id != action.payload)
+      state.expenses = state.expenses.filter(exp => exp._id != action.payload)
     },
     deleteExpenseFailure(state, action) {
       state.loading = false;
