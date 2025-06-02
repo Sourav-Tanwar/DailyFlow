@@ -5,8 +5,9 @@ import { getExpense, addExpense, updateExpense, deleteExpense } from '../feature
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { FaIndianRupeeSign } from "react-icons/fa6";
 import AddExpenseForm from './AddExpenseForm';
+import { Link } from 'react-router-dom'
 
-const ExpenseTracker = () => {
+const ExpenseTracker = ({ readOnly=false }) => {
   const dispatch = useDispatch();
   const { expenses, loading } = useSelector((state) => state.expense);
 
@@ -77,7 +78,8 @@ const ExpenseTracker = () => {
       <Navbar />
       <div className="bg-gray-100">
         <div className="max-w-6xl mx-auto p-6">
-          <h1 className="text-3xl font-bold mb-6">Expense Dashboard</h1>
+          {!readOnly ? <h1 className="text-3xl font-bold mb-6">Expenses</h1> : <h1 className="text-3xl font-bold mb-6"><Link to='expense'>Expense Dashboard</Link></h1>}
+          {!readOnly && (
           <button
             onClick={toggleShowForm}
             className="relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-purple-600 to-blue-500 hover:text-white"
@@ -86,8 +88,9 @@ const ExpenseTracker = () => {
               {editExpenseData ? "Edit Expense" : "Add Expense"}
             </span>
           </button>
+            )}
 
-          {showForm && (
+          {!readOnly &&showForm && (
             <AddExpenseForm
               editExpenseData={editExpenseData}
               setShowForm={setShowForm}
@@ -124,8 +127,10 @@ const ExpenseTracker = () => {
                   <th className="px-4 py-2">Expense</th>
                   <th className="px-4 py-2">Category</th>
                   <th className="px-4 py-2">Amount</th>
-                  <th className="px-4 py-2">Edit</th>
-                  <th className="px-4 py-2">Delete</th>
+                  {!readOnly && <th className="px-4 py-2">Edit</th>}
+                  {!readOnly &&<th className="px-4 py-2">Delete</th>}
+                  {/* <th className="px-4 py-2">Edit</th>
+                  <th className="px-4 py-2">Delete</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -133,6 +138,7 @@ const ExpenseTracker = () => {
                   [...expenses]
                     .filter((expense) => expense && expense.creation_Date)
                     .sort((a, b) => new Date(b.creation_Date) - new Date(a.creation_Date))
+                    .slice(0,readOnly ? 3:expenses.length)
                     .map((expense, index) => (
                       <tr key={index}>
                         <td className="px-4 py-2">{formatDate(expense.creation_Date)}</td>
@@ -141,6 +147,7 @@ const ExpenseTracker = () => {
                         <td className="px-4 py-2 text-red-500 flex items-center">
                           - <FaIndianRupeeSign /> {expense.amount}
                         </td>
+                        {!readOnly && (
                         <td className="px-4 py-2">
                           <MdOutlineEdit
                             onClick={() => handleEdit(expense)}
@@ -148,13 +155,23 @@ const ExpenseTracker = () => {
                             className="cursor-pointer hover:text-green-800"
                           />
                         </td>
-                        <td className="px-4 py-2">
+                        )}
+                        {!readOnly && 
+                          <td className="px-4 py-2">
                           <MdDelete
                             onClick={() => handleDelete(expense._id)}
                             size={22}
                             className="cursor-pointer hover:text-red-800"
                           />
                         </td>
+                        }
+                        {/* <td className="px-4 py-2">
+                          <MdDelete
+                            onClick={() => handleDelete(expense._id)}
+                            size={22}
+                            className="cursor-pointer hover:text-red-800"
+                          />
+                        </td> */}
                       </tr>
                     ))}
               </tbody>
