@@ -1,17 +1,8 @@
 // import React from 'react'
 import ExpenseTracker from './ExpenseTracker'
-import React, { useEffect, useState, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { MdOutlineEdit } from "react-icons/md";
-import { MdDelete } from "react-icons/md";
-import { FaIndianRupeeSign } from "react-icons/fa6";
-import { getExpense,updateExpense, deleteExpense } from '../features/expense/expenseSlice';
+import React from 'react';
 
 const Dashboard = () => {
-
-
-
-  
   return (
     <>
       <ExpenseTracker  readOnly={true}/>
