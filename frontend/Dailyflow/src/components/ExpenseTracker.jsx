@@ -5,7 +5,8 @@ import { getExpense, addExpense, updateExpense, deleteExpense } from '../feature
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
 import { FaIndianRupeeSign } from "react-icons/fa6";
 import AddExpenseForm from './AddExpenseForm';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import {formatDate,calculateExpenseTotals} from '../utils/expenseUtils'
 
 const ExpenseTracker = ({ readOnly=false }) => {
   const dispatch = useDispatch();
@@ -18,39 +19,9 @@ const ExpenseTracker = ({ readOnly=false }) => {
     dispatch(getExpense());
   }, [dispatch]);
 
-  const formatDate = (isoDate) => {
-    const date = new Date(isoDate);
-    const options = { day: 'numeric', month: 'long', year: 'numeric' };
-    return date.toLocaleDateString('en-GB', options);
-  };
-
-  const { thisMonthTotal, lastMonthTotal, thisYearTotal } = useMemo(() => {
-    let thisMonthTotal = 0;
-    let lastMonthTotal = 0;
-    let thisYearTotal = 0;
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-
-    if (expenses) {
-      expenses.forEach((expense) => {
-        if (!expense || !expense.creation_Date || isNaN(expense.amount)) return;
-        const date = new Date(expense.creation_Date);
-        const month = date.getMonth();
-        const year = date.getFullYear();
-
-        if (year === currentYear) {
-          thisYearTotal += expense.amount;
-          if (month === currentMonth) {
-            thisMonthTotal += expense.amount;
-          } else if (month === currentMonth - 1 || (currentMonth === 0 && month === 11)) {
-            lastMonthTotal += expense.amount;
-          }
-        }
-      });
-    }
-    return { thisMonthTotal, lastMonthTotal, thisYearTotal };
-  }, [expenses]);
+  const {thisMonthTotal, lastMonthTotal, thisYearTotal} = useMemo(()=>{
+    return calculateExpenseTotals(expenses)
+  },[expenses])
 
   const handleEdit = (expense) => {
     setEditExpenseData(expense);
@@ -79,11 +50,7 @@ const ExpenseTracker = ({ readOnly=false }) => {
       <div className="bg-gray-100">
         <div className="max-w-6xl mx-auto p-6">
           <div className="flex items-center gap-4 mb-6">
-
           {!readOnly ? <h1 className="text-3xl font-bold mb-6">Expenses</h1> : <h1 className="text-3xl font-bold mb-6"><Link to='expense'>Expense Dashboard</Link></h1>}
-
-
-          
           {!readOnly && (
           <button
             onClick={toggleShowForm}
@@ -94,12 +61,7 @@ const ExpenseTracker = ({ readOnly=false }) => {
             </span>
           </button>
             )}
-
-
           </div>
-          
-
-
           {!readOnly &&showForm && (
             <AddExpenseForm
               editExpenseData={editExpenseData}
@@ -139,8 +101,6 @@ const ExpenseTracker = ({ readOnly=false }) => {
                   <th className="px-4 py-2">Amount</th>
                   {!readOnly && <th className="px-4 py-2">Edit</th>}
                   {!readOnly &&<th className="px-4 py-2">Delete</th>}
-                  {/* <th className="px-4 py-2">Edit</th>
-                  <th className="px-4 py-2">Delete</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -175,13 +135,6 @@ const ExpenseTracker = ({ readOnly=false }) => {
                           />
                         </td>
                         }
-                        {/* <td className="px-4 py-2">
-                          <MdDelete
-                            onClick={() => handleDelete(expense._id)}
-                            size={22}
-                            className="cursor-pointer hover:text-red-800"
-                          />
-                        </td> */}
                       </tr>
                     ))}
               </tbody>
