@@ -17,6 +17,7 @@ function App() {
   return (
     <>
     <Router>
+      <Navbar></Navbar>
       <Routes>
       <Route exact path='/' element={<Dashboard/>}/>
       <Route exact path="/login" element={<Login/>}/>

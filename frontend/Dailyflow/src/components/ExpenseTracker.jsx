@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import Navbar from "./Navbar";
 import { useDispatch, useSelector } from 'react-redux';
 import { getExpense, addExpense, updateExpense, deleteExpense } from '../features/expense/expenseSlice';
 import { MdOutlineEdit, MdDelete } from "react-icons/md";
@@ -11,7 +10,6 @@ import {formatDate,calculateExpenseTotals} from '../utils/expenseUtils'
 const ExpenseTracker = ({ readOnly=false }) => {
   const dispatch = useDispatch();
   const { expenses, loading } = useSelector((state) => state.expense);
-
   const [showForm, setShowForm] = useState(false);
   const [editExpenseData, setEditExpenseData] = useState(null);
 
@@ -46,7 +44,7 @@ const ExpenseTracker = ({ readOnly=false }) => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <div className="bg-gray-100">
         <div className="max-w-6xl mx-auto p-6">
           <div className="flex items-center gap-4 mb-6">
