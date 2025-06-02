@@ -78,7 +78,12 @@ const ExpenseTracker = ({ readOnly=false }) => {
       <Navbar />
       <div className="bg-gray-100">
         <div className="max-w-6xl mx-auto p-6">
+          <div className="flex items-center gap-4 mb-6">
+
           {!readOnly ? <h1 className="text-3xl font-bold mb-6">Expenses</h1> : <h1 className="text-3xl font-bold mb-6"><Link to='expense'>Expense Dashboard</Link></h1>}
+
+
+          
           {!readOnly && (
           <button
             onClick={toggleShowForm}
@@ -89,6 +94,11 @@ const ExpenseTracker = ({ readOnly=false }) => {
             </span>
           </button>
             )}
+
+
+          </div>
+          
+
 
           {!readOnly &&showForm && (
             <AddExpenseForm
