@@ -6,6 +6,7 @@ import { FaIndianRupeeSign } from "react-icons/fa6";
 import AddExpenseForm from './AddExpenseForm';
 import { Link } from 'react-router-dom';
 import {formatDate,calculateExpenseTotals} from '../utils/expenseUtils'
+import Navbar from '../components/Navbar'
 
 const ExpenseTracker = ({ readOnly=false }) => {
   const dispatch = useDispatch();
@@ -45,6 +46,7 @@ const ExpenseTracker = ({ readOnly=false }) => {
   return (
     <>
       {/* <Navbar /> */}
+      <Navbar></Navbar>
       <div className="bg-gray-100">
         <div className="max-w-6xl mx-auto p-6">
           <div className="flex items-center gap-4 mb-6">
