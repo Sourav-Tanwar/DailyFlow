@@ -11,7 +11,7 @@ export const getExpense = () => async (dispatch) => {
       },
     });
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     if (!data) {
       throw new Error("Failed to fetch expenses");
       // console.log("Data response failed")
@@ -45,7 +45,7 @@ export const addExpense = createAsyncThunk(
         body: JSON.stringify(expenseData),
       });
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       dispatch(addExpenseSuccess(data.Expense));
     } catch (error) {
       dispatch(addExpenseFailure(error.message));
@@ -58,7 +58,7 @@ export const updateExpense = (expenseId, updatedData) => async (dispatch) => {
   dispatch(updateExpenseStart())
   const token = localStorage.getItem("authToken");
   // console.log(expenseId)
-  console.log(updatedData)
+  // console.log(updatedData)
   if (!token) {
     return { meta: { requestStatus: 'rejected' }, error: { message: error } };
   }
@@ -73,7 +73,7 @@ export const updateExpense = (expenseId, updatedData) => async (dispatch) => {
     });
 
     const data = await response.json();
-    console.log("Updated Data", data)
+    // console.log("Updated Data", data)
 
     if (!response.ok) {
       throw new Error(data.message || "Edit failed");
@@ -90,7 +90,7 @@ export const updateExpense = (expenseId, updatedData) => async (dispatch) => {
 export const deleteExpense = createAsyncThunk(
   "expense/deleteExpense",
   async (expenseId, thunkAPI) => {
-    console.log(expenseId)
+    // console.log(expenseId)
     const { dispatch } = thunkAPI;
     dispatch(deleteExpenseStart());
     const token = localStorage.getItem("authToken");
@@ -107,7 +107,7 @@ export const deleteExpense = createAsyncThunk(
       });
 
       const data = await response.json();
-      console.log("Deleted Expense", data)
+      // console.log("Deleted Expense", data)
       if (!response.ok) {
         throw new Error(data.message || "Delete failed");
       }

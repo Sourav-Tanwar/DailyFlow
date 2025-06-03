@@ -5,7 +5,7 @@ export const signupUser = createAsyncThunk(
   'auth/createUser',
   async ({ name, email, password, confirmPass }, thunkAPI) => {
     try {
-      console.log(name,email,password,confirmPass)
+      // console.log(name,email,password,confirmPass)
       if (password === confirmPass) {
         const response = await fetch("http://localhost:3000/api/createUser", {
           method: 'POST',
@@ -15,7 +15,7 @@ export const signupUser = createAsyncThunk(
           body: JSON.stringify({ name, email,password })
         });
         const data = await response.json()
-        console.log(data)
+        // console.log(data)
         if (!data.success) {
           return thunkAPI.rejectWithValue("Invalid email and password")
         }
@@ -23,7 +23,7 @@ export const signupUser = createAsyncThunk(
           localStorage.setItem("userEmail", email);
           localStorage.setItem("authToken", data.authtoken);
           // console.log(localStorage.getItem("userEmail","authtoken" ))
-          console.log(email, data.authtoken)
+          // console.log(email, data.authtoken)
           return { user: email, token: data.authtoken };
         }
       } else {
@@ -31,7 +31,7 @@ export const signupUser = createAsyncThunk(
       }
     }
     catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue("Signup failed. Server error.");
     }
   } 
@@ -54,11 +54,11 @@ export const loginUser = createAsyncThunk(
       }
       localStorage.setItem("userEmail", email);
       localStorage.setItem("authToken", data.authtoken)
-      console.log(email, data.authtoken)
+      // console.log(email, data.authtoken)
       return { user: email, token: data.authtoken };
     }
     catch (error) {
-      console.log(error)
+      // console.log(error)
       return thunkAPI.rejectWithValue("Login failed. Server error.");
     }
   }
@@ -88,7 +88,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        console.log(action.payload)
+        // console.log(action.payload)
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
@@ -102,7 +102,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(signupUser.fulfilled, (state, action) => {
-        console.log(action.payload)
+        // console.log(action.payload)
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;

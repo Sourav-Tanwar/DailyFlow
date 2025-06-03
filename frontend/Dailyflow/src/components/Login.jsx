@@ -48,7 +48,7 @@ export default function Login() {
   // }
   const onChange = (event) => {
     setcredentials({ ...credentials, [event.target.name]: event.target.value })
-    console.log(credentials)
+    // console.log(credentials)
   }
   return (
     <>
