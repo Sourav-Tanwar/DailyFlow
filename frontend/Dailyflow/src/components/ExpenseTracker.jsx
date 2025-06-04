@@ -66,6 +66,7 @@ const ExpenseTracker = ({ readOnly=false }) => {
             <AddExpenseForm
               editExpenseData={editExpenseData}
               setShowForm={setShowForm}
+              setEditExpenseData={setEditExpenseData}
             />
           )}
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addExpense, updateExpense, getExpense } from '../features/expense/expenseSlice';
 
-const AddExpenseForm = ({ editExpenseData, setShowForm }) => {
+const AddExpenseForm = ({ editExpenseData,setEditExpenseData, setShowForm }) => {
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.expense);
 
@@ -41,6 +41,7 @@ const AddExpenseForm = ({ editExpenseData, setShowForm }) => {
     let result;
     if (editExpenseData) {
       result = await dispatch(updateExpense(editExpenseData._id, formData));
+      setEditExpenseData(null);
     } else {
       result = await dispatch(addExpense(formData));
     }
