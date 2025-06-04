@@ -47,8 +47,8 @@ const ExpenseTracker = ({ readOnly=false }) => {
     <>
       {/* <Navbar /> */}
       <Navbar></Navbar>
-      <div className="bg-gray-100">
-        <div className="max-w-6xl mx-auto p-6">
+      <div className="bg-gray-100 w-full min-h-screen">
+        <div className="max-w-6xl w-full mx-auto p-6">
           <div className="flex items-center gap-4 mb-6">
           {!readOnly ? <h1 className="text-3xl font-bold mb-6">Expenses</h1> : <h1 className="text-3xl font-bold mb-6"><Link to='expense'>Expense Dashboard</Link></h1>}
           {!readOnly && (
@@ -91,9 +91,9 @@ const ExpenseTracker = ({ readOnly=false }) => {
             </div>
           </div>
 
-          <div className="mt-8 bg-white rounded-xl shadow p-6">
+          <div className="mt-8 bg-white rounded-xl shadow p-6 overflow-x-auto">
             <h2 className="text-xl font-semibold mb-4">Recent Transactions</h2>
-            <table className="w-full text-sm text-left text-gray-500">
+            <table className="w-full min-w-[600px] text-sm text-left text-gray-500">
               <thead className="text-xs uppercase text-gray-700 bg-gray-100">
                 <tr>
                   <th className="px-4 py-2">Date</th>
@@ -115,8 +115,10 @@ const ExpenseTracker = ({ readOnly=false }) => {
                         <td className="px-4 py-2">{formatDate(expense.creation_Date)}</td>
                         <td className="px-4 py-2">{expense.expense}</td>
                         <td className="px-4 py-2">{expense.category}</td>
-                        <td className="px-4 py-2 text-red-500 flex items-center">
+                        <td className="px-4 py-2 text-red-500 items-center">
+                          <span className="flex items-center gap-1">
                           - <FaIndianRupeeSign /> {expense.amount}
+                          </span>
                         </td>
                         {!readOnly && (
                         <td className="px-4 py-2">

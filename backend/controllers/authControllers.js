@@ -3,8 +3,8 @@ const { body, validationResult } = require('express-validator');
 const User = require("../models/UserSchema")
 const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET
 
-const JWT_SECRET = 'DailyFlow';
 
 const createUser = async (req, res) => {
   console.log("CreateUser Request")

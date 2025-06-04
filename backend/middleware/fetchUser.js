@@ -1,5 +1,5 @@
 var jwt = require('jsonwebtoken');
-const JWT_SECRET = 'DailyFlow';
+const JWT_SECRET = process.env.JWT_SECRET
 
 const fetchUser = (req, res, next) => {
   //Get the user from the jwt and id to req object
