@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const connectDB = require("./config/connectDB")
+const connectDB = require("./config/ConnectDB")
 const port = process.env.PORT
 const expenseRoutes = require("./routes/expenseRoutes")
 const tasksRoutes = require('./routes/tasksRoutes')

@@ -2,12 +2,16 @@ const mongoose = require('mongoose');
 const dotenv = require("dotenv")
 
 //loading .env file
-dotenv.config();
+// dotenv.config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGODB_URI, {
-      // useNewUrlParser: true,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
     });
     console.log(`MongoDB Connected`);
   } catch (error) {
