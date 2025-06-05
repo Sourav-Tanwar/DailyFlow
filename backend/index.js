@@ -19,6 +19,7 @@ app.get("/", (req, res) => {
 app.use('/api', expenseRoutes)
 app.use('/api', tasksRoutes)
 app.use('/api', userRoutes)
+app.get('/healthz', (req, res) => res.send('OK'));
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
