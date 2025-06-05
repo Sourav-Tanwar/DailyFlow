@@ -1,5 +1,6 @@
 // src/features/auth/authSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+const BE_API_BASE_URL = import.meta.env.VITE_BE_API_BASE_URL
 
 export const signupUser = createAsyncThunk(
   'auth/createUser',
@@ -7,12 +8,12 @@ export const signupUser = createAsyncThunk(
     try {
       // console.log(name,email,password,confirmPass)
       if (password === confirmPass) {
-        const response = await fetch("http://localhost:3000/api/createUser", {
+        const response = await fetch(`${BE_API_BASE_URL}/api/createUser`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ name, email,password })
+          body: JSON.stringify({ name, email, password })
         });
         const data = await response.json()
         // console.log(data)
@@ -34,7 +35,7 @@ export const signupUser = createAsyncThunk(
       // console.log(error)
       return thunkAPI.rejectWithValue("Signup failed. Server error.");
     }
-  } 
+  }
 )
 
 export const loginUser = createAsyncThunk(
@@ -42,7 +43,7 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }, thunkAPI) => {
     // console.log(email,password)
     try {
-      const response = await fetch("http://localhost:3000/api/login", {
+      const response = await fetch(`${BE_API_BASE_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -76,8 +77,8 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null,
-      state.token = null,
-      localStorage.removeItem("userEmail")
+        state.token = null,
+        localStorage.removeItem("userEmail")
       localStorage.removeItem("authToken")
     },
   },
@@ -114,7 +115,7 @@ const authSlice = createSlice({
   }
 })
 
-export const { logout,signup } = authSlice.actions;
+export const { logout, signup } = authSlice.actions;
 export default authSlice.reducer;
 
 

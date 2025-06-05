@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+const BE_API_BASE_URL = import.meta.env.VITE_BE_API_BASE_URL
 
 export const getExpense = () => async (dispatch) => {
   dispatch(fetchExpensesStart());
   try {
-    const res = await fetch("http://localhost:3000/api/Expense", {
+    const res = await fetch(`${BE_API_BASE_URL}/api/Expense`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -11,7 +12,7 @@ export const getExpense = () => async (dispatch) => {
       },
     });
     const data = await res.json();
-    // console.log(data);
+    console.log(data);
     if (!data) {
       throw new Error("Failed to fetch expenses");
       // console.log("Data response failed")
@@ -24,8 +25,6 @@ export const getExpense = () => async (dispatch) => {
 };
 
 
-
-
 export const addExpense = createAsyncThunk(
   "expense/addExpense",
   async (expenseData, thunkAPI) => {
@@ -36,7 +35,7 @@ export const addExpense = createAsyncThunk(
       return thunkAPI.rejectWithValue("No auth token found");
     }
     try {
-      const response = await fetch("http://localhost:3000/api/Expense", {
+      const response = await fetch(`${BE_API_BASE_URL}/api/Expense `, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -45,7 +44,7 @@ export const addExpense = createAsyncThunk(
         body: JSON.stringify(expenseData),
       });
       const data = await response.json();
-      // console.log(data);
+      console.log(data);
       dispatch(addExpenseSuccess(data.Expense));
     } catch (error) {
       dispatch(addExpenseFailure(error.message));
@@ -63,7 +62,7 @@ export const updateExpense = (expenseId, updatedData) => async (dispatch) => {
     return { meta: { requestStatus: 'rejected' }, error: { message: error } };
   }
   try {
-    const response = await fetch(`http://localhost:3000/api/Expense/${expenseId}`, {
+    const response = await fetch(`${BE_API_BASE_URL}/api/Expense/${expenseId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -98,7 +97,7 @@ export const deleteExpense = createAsyncThunk(
       return thunkAPI.rejectWithValue("No auth token found");
     }
     try {
-      const response = await fetch(`http://localhost:3000/api/Expense/${expenseId}`, {
+      const response = await fetch(`${BE_API_BASE_URL}/api/Expense/${expenseId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
