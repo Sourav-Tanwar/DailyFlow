@@ -15,7 +15,7 @@ export default function Login() {
     const resultAction = await dispatch(signupUser(newUser));
 
     if (signupUser.fulfilled.match(resultAction)) {
-      Navigate("/expense")
+      Navigate("/")
     }
     else {
       alert(resultAction.payload || "Login failed");
@@ -58,7 +58,7 @@ export default function Login() {
   }
   return (
     <>
-    <Navbar></Navbar>
+      <Navbar></Navbar>
       <div className="container">
         <form className="max-w-sm mx-auto" onSubmit={handleSubmit}>
           <div className="mb-5">

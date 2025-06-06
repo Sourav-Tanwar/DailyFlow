@@ -16,7 +16,7 @@ export default function Login() {
     e.preventDefault();
     const resultAction  = await dispatch(loginUser(credentials));
     if (loginUser.fulfilled.match(resultAction)){
-      Navigate("/expense")
+      Navigate("/")
     }
     else {
       alert(resultAction.payload || "Login failed");
