@@ -3,12 +3,15 @@ import { Link, useNavigate } from 'react-router-dom'
 import { signupUser } from '../features/auth/authSlice';
 import { useSelector, useDispatch } from 'react-redux';
 import Navbar from '../components/Navbar'
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Login() {
   const dispatch = useDispatch();
   const [newUser, setnewUser] = useState({ name: "", email: "", password: "", confirmPass: "" })
   let Navigate = useNavigate()
   const { loading, error } = useSelector((state) => state.auth);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,12 +75,34 @@ export default function Login() {
 
           <div className="mb-5">
             <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-900">Password</label>
-            <input type="password" id="password" name='password' value={newUser.password} onChange={onChange} autoComplete="new-password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required />
+            <div className="relative">
+              <input type={showPassword ? "text" : "password"} id="password" name='password' value={newUser.password} onChange={onChange} autoComplete="new-password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center pr-3"
+                onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+
           </div>
 
           <div className="mb-5">
             <label htmlFor="confirmPass" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-900" >Confirm Password</label>
-            <input type="password" id="confirmPass" name='confirmPass' value={newUser.confirmPass} onChange={onChange} autoComplete="new-password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
+            <div className="relative">
+              <input type={showConfirmPassword ? "text" : "password"} id="confirmPass" name='confirmPass' value={newUser.confirmPass} onChange={onChange} autoComplete="new-password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-0 flex items-center pr-3"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+
           </div>
           <button type="submit" disabled={loading} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{loading ? "Signing in..." : "Submit"}</button>
           <Link to="/login" className="m-3 btn btn-danger">Already signed up.</Link>
