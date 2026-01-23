@@ -25,6 +25,19 @@ export default function Login() {
     }
   }
 
+  function getPasswordStrength(password) {
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[0-9]/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+    if (strength <= 2) return { label: "Weak", color: "red" };
+    if (strength === 3) return { label: "Medium", color: "orange" };
+    if (strength >= 4) return { label: "Strong", color: "green" };
+    return { label: "", color: "" };
+  }
 
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
@@ -76,7 +89,16 @@ export default function Login() {
           <div className="mb-5">
             <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-900">Password</label>
             <div className="relative">
-              <input type={showPassword ? "text" : "password"} id="password" name='password' value={newUser.password} onChange={onChange} autoComplete="new-password" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " required />
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name='password'
+                value={newUser.password}
+                onChange={onChange}
+                autoComplete="new-password"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+                required
+              />
               <button
                 type="button"
                 className="absolute inset-y-0 right-0 flex items-center pr-3"
@@ -86,7 +108,13 @@ export default function Login() {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
-
+            {newUser.password && (
+              <div className="mt-1">
+                <span style={{ color: getPasswordStrength(newUser.password).color }}>
+                  Password Strength: {getPasswordStrength(newUser.password).label}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="mb-5">
