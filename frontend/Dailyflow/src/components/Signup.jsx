@@ -39,6 +39,12 @@ export default function Login() {
     return { label: "", color: "" };
   }
 
+
+  function isValidEmail(email) {
+    // Simple regex for email validation
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
   // const handleSubmit = async (e) => {
   //   e.preventDefault();
   //   console.log(JSON.stringify({ name: newUser.name, email: newUser.email, password: newUser.password, confirmPass: newUser.confirmPass }))
@@ -84,6 +90,9 @@ export default function Login() {
           <div className="mb-5">
             <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-900">Email address</label>
             <input type="email" id="email" name="email" value={newUser.email} onChange={onChange} autoComplete="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="example@xyz.com" required />
+            {newUser.email && !isValidEmail(newUser.email) && (
+              <p className="text-red-500 text-sm mt-1">Please enter a valid email address.</p>
+            )}
           </div>
 
           <div className="mb-5">
