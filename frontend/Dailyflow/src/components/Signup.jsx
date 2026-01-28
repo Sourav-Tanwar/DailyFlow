@@ -1,14 +1,19 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { signupUser } from '../features/auth/authSlice';
-import { useSelector, useDispatch } from 'react-redux';
-import Navbar from '../components/Navbar'
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { signupUser } from "../features/auth/authSlice";
+import { useSelector, useDispatch } from "react-redux";
+import Navbar from "../components/Navbar";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function Login() {
   const dispatch = useDispatch();
-  const [newUser, setnewUser] = useState({ name: "", email: "", password: "", confirmPass: "" })
-  let Navigate = useNavigate()
+  const [newUser, setnewUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPass: "",
+  });
+  let Navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -18,12 +23,11 @@ export default function Login() {
     const resultAction = await dispatch(signupUser(newUser));
 
     if (signupUser.fulfilled.match(resultAction)) {
-      Navigate("/")
-    }
-    else {
+      Navigate("/");
+    } else {
       alert(resultAction.payload || "Login failed");
     }
-  }
+  };
 
   function getPasswordStrength(password) {
     let strength = 0;
@@ -34,11 +38,10 @@ export default function Login() {
     if (/[^A-Za-z0-9]/.test(password)) strength++;
 
     if (strength <= 2) return { label: "Weak", color: "red" };
-    if (strength === 3) return { label: "Medium", color: "orange" };
-    if (strength >= 4) return { label: "Strong", color: "green" };
+    if (strength <= 4) return { label: "Medium", color: "orange" };
+    if (strength >= 5) return { label: "Strong", color: "green" };
     return { label: "", color: "" };
   }
-
 
   function isValidEmail(email) {
     // Simple regex for email validation
@@ -73,35 +76,95 @@ export default function Login() {
   //   }
   // }
 
-
   const onChange = (event) => {
-    setnewUser({ ...newUser, [event.target.name]: event.target.value })
+    setnewUser({ ...newUser, [event.target.name]: event.target.value });
     // console.log(newUser)
+  };
+
+  const passwordRequirements = [
+    { label: "At least 8 characters", test: (pw) => pw.length >= 8 },
+    { label: "At least one uppercase letter", test: (pw) => /[A-Z]/.test(pw) },
+    { label: "At least one lowercase letter", test: (pw) => /[a-z]/.test(pw) },
+    { label: "At least one number", test: (pw) => /[0-9]/.test(pw) },
+    {
+      label: "At least one special character",
+      test: (pw) => /[^A-Za-z0-9]/.test(pw),
+    },
+  ];
+
+  function isPasswordValid(password) {
+    return passwordRequirements.every((req) => req.test(password));
   }
+
+  const isDisabled =
+    loading ||
+    !newUser.name ||
+    !newUser.email ||
+    !newUser.password ||
+    !newUser.confirmPass ||
+    !isValidEmail(newUser.email) ||
+    !isPasswordValid(newUser.password) ||
+    newUser.password !== newUser.confirmPass;
+
   return (
     <>
       <Navbar></Navbar>
       <div className="container">
         <form className="max-w-sm mx-auto" onSubmit={handleSubmit}>
           <div className="mb-5">
-            <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-900">Name</label>
-            <input type="text" id="name" name="name" value={newUser.name} onChange={onChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required />
+            <label
+              htmlFor="name"
+              className="block mb-2 text-sm font-medium text-gray-900"
+            >
+              Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={newUser.name}
+              onChange={onChange}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+              required
+            />
           </div>
           <div className="mb-5">
-            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-900">Email address</label>
-            <input type="email" id="email" name="email" value={newUser.email} onChange={onChange} autoComplete="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 " placeholder="example@xyz.com" required />
+            <label
+              htmlFor="email"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-900"
+            >
+              Email address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={newUser.email}
+              onChange={onChange}
+              autoComplete="email"
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+              placeholder="example@xyz.com"
+              required
+            />
             {newUser.email && !isValidEmail(newUser.email) && (
-              <p className="text-red-500 text-sm mt-1">Please enter a valid email address.</p>
+              <p className="text-red-500 text-sm mt-1">
+                Please enter a valid email address.
+              </p>
             )}
           </div>
 
           <div className="mb-5">
-            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-900">Password</label>
+            <label
+              htmlFor="password"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-900"
+            >
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                name='password'
+                name="password"
                 value={newUser.password}
                 onChange={onChange}
                 autoComplete="new-password"
@@ -119,20 +182,28 @@ export default function Login() {
             </div>
             {newUser.password && (
               <div className="mt-1">
-                <span style={{ color: getPasswordStrength(newUser.password).color }}>
-                  Password Strength: {getPasswordStrength(newUser.password).label}
+                <span
+                  style={{ color: getPasswordStrength(newUser.password).color }}
+                >
+                  Password Strength:{" "}
+                  {getPasswordStrength(newUser.password).label}
                 </span>
               </div>
             )}
           </div>
 
           <div className="mb-5">
-            <label htmlFor="confirmPass" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-900" >Confirm Password</label>
+            <label
+              htmlFor="confirmPass"
+              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-900"
+            >
+              Confirm Password
+            </label>
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 id="confirmPass"
-                name='confirmPass'
+                name="confirmPass"
                 value={newUser.confirmPass}
                 onChange={onChange}
                 autoComplete="new-password"
@@ -143,20 +214,37 @@ export default function Login() {
                 type="button"
                 className="absolute inset-y-0 right-0 flex items-center pr-3"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+                aria-label={
+                  showConfirmPassword
+                    ? "Hide confirm password"
+                    : "Show confirm password"
+                }
               >
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
-            {newUser.confirmPass && newUser.password !== newUser.confirmPass && (
-              <p className="text-red-500 text-sm mt-1">Passwords do not match</p>
-            )}
+            {newUser.confirmPass &&
+              newUser.password !== newUser.confirmPass && (
+                <p className="text-red-500 text-sm mt-1">
+                  Passwords do not match
+                </p>
+              )}
           </div>
-          <button type="submit" disabled={loading} className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">{loading ? "Signing in..." : "Submit"}</button>
-          <Link to="/login" className="m-3 btn btn-danger">Already signed up.</Link>
+          <button
+            type="submit"
+            disabled={isDisabled}
+            className={`text-white font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ${
+              isDisabled ? "bg-blue-200 cursor-not-allowed" : "bg-blue-700"
+            }`}
+          >
+            {loading ? "Signing in..." : "Submit"}
+          </button>
+          <Link to="/login" className="m-3 btn btn-danger">
+            Already signed up.
+          </Link>
           {error && <p className="text-red-500 mt-2">{error}</p>}
         </form>
       </div>
     </>
-  )
+  );
 }
