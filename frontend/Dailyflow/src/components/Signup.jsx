@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { signupUser } from "../features/auth/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import Navbar from "../components/Navbar";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -238,7 +238,14 @@ export default function Login() {
               isDisabled ? "bg-blue-200 cursor-not-allowed" : "bg-blue-700"
             }`}
           >
-            {loading ? "Signing in..." : "Submit"}
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <FaSpinner className="animate-spin mr-2" />
+                Signing in...
+              </span>
+            ) : (
+              "Submit"
+            )}
           </button>
           <Link to="/login" className="m-3 btn btn-danger">
             Already signed up.
