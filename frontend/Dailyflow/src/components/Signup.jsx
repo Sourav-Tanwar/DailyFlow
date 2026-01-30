@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { signupUser } from "../features/auth/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import Navbar from "../components/Navbar";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -17,15 +17,20 @@ export default function Login() {
   const { loading, error } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const resultAction = await dispatch(signupUser(newUser));
 
     if (signupUser.fulfilled.match(resultAction)) {
-      Navigate("/");
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+        Navigate("/");
+      }, 2000);
     } else {
-      alert(resultAction.payload || "Login failed");
+      alert(resultAction.payload || "Signup failed");
     }
   };
 
@@ -126,6 +131,7 @@ export default function Login() {
               onChange={onChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               required
+              autoFocus
             />
           </div>
           <div className="mb-5">
@@ -233,16 +239,27 @@ export default function Login() {
           <button
             type="submit"
             disabled={isDisabled}
-            className={`text-white font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ${
-              isDisabled ? "bg-blue-200 cursor-not-allowed" : "bg-blue-700"
-            }`}
+            className={`text-white font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ${isDisabled ? "bg-blue-200 cursor-not-allowed" : "bg-blue-700"
+              }`}
           >
-            {loading ? "Signing in..." : "Submit"}
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <FaSpinner className="animate-spin mr-2" />
+                Signing in...
+              </span>
+            ) : (
+              "Submit"
+            )}
           </button>
           <Link to="/login" className="m-3 btn btn-danger">
             Already signed up.
           </Link>
           {error && <p className="text-red-500 mt-2">{error}</p>}
+          {success && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mt-4 mb-2 text-center" aria-live="polite">
+              Signup successful! Redirecting...
+            </div>
+          )}
         </form>
       </div>
     </>

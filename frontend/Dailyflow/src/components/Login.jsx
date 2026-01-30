@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { loginUser } from "../features/auth/authSlice";
 import Navbar from "../components/Navbar";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -11,12 +11,17 @@ export default function Login() {
   let Navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const resultAction = await dispatch(loginUser(credentials));
     if (loginUser.fulfilled.match(resultAction)) {
-      Navigate("/");
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+        Navigate("/");
+      }, 2000);
     } else {
       alert(resultAction.payload || "Login failed");
     }
@@ -69,6 +74,7 @@ export default function Login() {
               autoComplete="username"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5="
               placeholder="example@xyz.com"
+              autoFocus
               required
             />
           </div>
@@ -105,12 +111,24 @@ export default function Login() {
             disabled={loading}
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
-            {loading ? "Logging in..." : "Submit"}
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <FaSpinner className="animate-spin mr-2" />
+                Logging in...
+              </span>
+            ) : (
+              "Submit"
+            )}
           </button>
           <Link to="/Signup" className="m-3 btn btn-danger">
             I'm a new User
           </Link>
           {error && <p className="text-red-500 mt-2">{error}</p>}
+          {success && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mt-4 mb-2 text-center" aria-live="polite">
+              Signup successful! Redirecting...
+            </div>
+          )}
         </form>
       </div>
     </>
