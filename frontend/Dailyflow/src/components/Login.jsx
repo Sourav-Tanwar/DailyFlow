@@ -11,12 +11,17 @@ export default function Login() {
   let Navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const resultAction = await dispatch(loginUser(credentials));
     if (loginUser.fulfilled.match(resultAction)) {
-      Navigate("/");
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+        Navigate("/");
+      }, 2000);
     } else {
       alert(resultAction.payload || "Login failed");
     }
@@ -119,6 +124,11 @@ export default function Login() {
             I'm a new User
           </Link>
           {error && <p className="text-red-500 mt-2">{error}</p>}
+          {success && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mt-4 mb-2 text-center" aria-live="polite">
+              Signup successful! Redirecting...
+            </div>
+          )}
         </form>
       </div>
     </>
