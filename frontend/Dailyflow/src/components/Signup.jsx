@@ -138,6 +138,7 @@ export default function Login() {
               onChange={onChange}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
               required
+              autoFocus
             />
           </div>
           <div className="mb-5">
@@ -248,7 +249,14 @@ export default function Login() {
             className={`text-white font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ${isDisabled ? "bg-blue-200 cursor-not-allowed" : "bg-blue-700"
               }`}
           >
-            {loading ? "Signing in..." : "Submit"}
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <FaSpinner className="animate-spin mr-2" />
+                Signing in...
+              </span>
+            ) : (
+              "Submit"
+            )}
           </button>
           <Link to="/login" className="m-3 btn btn-danger">
             Already signed up.
