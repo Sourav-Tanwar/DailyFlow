@@ -18,7 +18,7 @@ export const signupUser = createAsyncThunk(
         const data = await response.json()
         // console.log(data)
         if (!data.success) {
-          return thunkAPI.rejectWithValue("Invalid email and password")
+          return thunkAPI.rejectWithValue(data.error || "Invalid email and password")
         }
         if (data.success) {
           localStorage.setItem("userEmail", email);
@@ -51,7 +51,7 @@ export const loginUser = createAsyncThunk(
       const data = await response.json();
       // console.log(data)
       if (!data.success) {
-        return thunkAPI.rejectWithValue("Invalid email and password")
+        return thunkAPI.rejectWithValue(data.error || "Invalid email and password")
       }
       localStorage.setItem("userEmail", email);
       localStorage.setItem("authToken", data.authtoken)
@@ -81,6 +81,9 @@ const authSlice = createSlice({
         localStorage.removeItem("userEmail")
       localStorage.removeItem("authToken")
     },
+    clearError: (state) => {
+    state.error = null;
+  },
   },
   extraReducers: (builder) => {
     builder
@@ -115,7 +118,7 @@ const authSlice = createSlice({
   }
 })
 
-export const { logout, signup } = authSlice.actions;
+export const { logout, signup, clearError } = authSlice.actions;
 export default authSlice.reducer;
 
 

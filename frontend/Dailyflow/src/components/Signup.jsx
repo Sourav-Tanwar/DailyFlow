@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signupUser } from "../features/auth/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import Navbar from "../components/Navbar";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
+import { clearError } from "../features/auth/authSlice";
+
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -17,16 +19,26 @@ export default function Login() {
   const { loading, error } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const resultAction = await dispatch(signupUser(newUser));
 
     if (signupUser.fulfilled.match(resultAction)) {
-      Navigate("/");
-    } else {
-      alert(resultAction.payload || "Login failed");
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+        Navigate("/");
+      }, 1500);
     }
+    // else {
+    //   alert(resultAction.payload || "Signup failed");
+    // }
   };
 
   function getPasswordStrength(password) {
@@ -233,9 +245,8 @@ export default function Login() {
           <button
             type="submit"
             disabled={isDisabled}
-            className={`text-white font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ${
-              isDisabled ? "bg-blue-200 cursor-not-allowed" : "bg-blue-700"
-            }`}
+            className={`text-white font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ${isDisabled ? "bg-blue-200 cursor-not-allowed" : "bg-blue-700"
+              }`}
           >
             {loading ? "Signing in..." : "Submit"}
           </button>
@@ -243,6 +254,11 @@ export default function Login() {
             Already signed up.
           </Link>
           {error && <p className="text-red-500 mt-2">{error}</p>}
+          {success && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mt-4 mb-2 text-center" aria-live="polite">
+              Signup successful! Redirecting...
+            </div>
+          )}
         </form>
       </div>
     </>
